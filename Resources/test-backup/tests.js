@@ -4,7 +4,7 @@
 		Ti.include('/kranium/lib/test/jasmine-titanium-node.js');
 		
 		// Include all the test files
-		Ti.include('/test/core.js');
+		//Ti.include('/test/core.js');
 		
 		jasmine.getEnv().addReporter(new jasmine.TitaniumNodeReporter());
 		jasmine.getEnv().execute();

@@ -15,13 +15,15 @@ K({
 		title: 'Jade',
 		window: {
 			children: [
-				'test.jade'.jaded({ 
+				/*K.jade('test.jade', { 
 					users: { 
-						jacob: 'yeah', 
+						jacob: 'yeah',
+						david: 'what',
 						conny: 'hi', 
-						aida: 'hello' 
+						aida: 'hello',
+						calle: 'yup'
 					}
-				})
+				})*/
 			]
 		}
 	}]

@@ -11,7 +11,7 @@
 
 		describe('TabGroup', function(){
 			it('Has tabgroup', function(){ expect(K('tabgroup').length).toBeGreaterThan(0); });
-			it('TabGroup.activeTab.title === "test"', function(){ expect(K('tabgroup').get(0).activeTab.title).toEqual("test"); });
+			it('TabGroup.activeTab.title === "test"', function(){ expect(K('tabgroup').get(0).activeTab.title).toEqual("Coffee Demo"); });
 		});
 	});
 	

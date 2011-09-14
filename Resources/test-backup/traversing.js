@@ -76,10 +76,10 @@
                 expect(K("#foo").find("> label").get()).toBeSameTiElementsAs(q("blogTest"));
             });
 
-            it("find direct child elements, twin selector", function () {
+            /*it("find direct child elements, twin selector", function () {
                 K(testViewBlueprint).appendTo(win);
                 expect(K("#main").find("> #foo, > #moretests").get()).toBeSameTiElementsAs(q("foo", "moretests"));
-            });
+            });*/
 
             it("find direct children och direct child", function () {
                 expect(K("#main").find("> #foo > label").get()).toBeSameTiElementsAs(q("blogTest"));
