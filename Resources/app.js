@@ -1,29 +1,17 @@
 Ti.include("/kranium/lib/kranium.js");
+//Ti.include("jade.js");
 
 K({
 	type: 'tabgroup',
 	tabs: [{
 		title: 'Coffee Demo',
 		window: {
-			children: [{
-				type: 'coffeedemo',
-				text: 'what goes around'
-			}]
+			//type: 'window',
+			id: 'hu',
+			//children: ['label heja']
 		}
-	},
-	/*{
-		title: 'Backbone Demo',
-		window: {
-			id: 'backbonewindow',
-			rightNavButton: {
-				systemButton: Titanium.UI.iPhone.SystemButton.ADD,
-				click: function(){
-					Ti.App.fireEvent('backbonewindowadd', { value: this.editing });
-				}
-			},
-			children: [{
-				type: 'backbonedemo'
-			}]
-		}
-	}*/]
+	}]
 }).open();
+
+
+J('test.jade', {users: { jacob: 'yeah' }}).css({ top: 10, left: 20 }).appendTo('#hu');

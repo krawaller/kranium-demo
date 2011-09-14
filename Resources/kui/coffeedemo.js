@@ -22,7 +22,7 @@
           text: "swipe me",
           events: {
             swipe: function(e) {
-              return K.log(e);
+              return alert(e);
             },
             app: {
               pause: function(e) {
@@ -35,7 +35,7 @@
           type: "button",
           title: "click me",
           click: function(e) {
-            return K.log(e);
+            return alert(e);
           }
         }, {
           className: "demoitem coffeetable",

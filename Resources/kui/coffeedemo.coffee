@@ -16,7 +16,7 @@ exports.Class = View.extend
 			text: "swipe me"
 			events:
 				swipe: (e) ->
-					K.log e
+					alert e
 				app:
 					pause: (e) ->
 						@text = "Don't you dare pausing me!"
@@ -26,7 +26,7 @@ exports.Class = View.extend
 			type: "button"
 			title: "click me"
 			click: (e) ->
-				K.log e
+				alert e
 		}
 		{
 			className: "demoitem coffeetable"
