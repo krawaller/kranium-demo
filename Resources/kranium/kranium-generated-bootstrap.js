@@ -3,9 +3,9 @@
     if(global.BOOTSTRAPPED){ return; }
     global.DEBUG = false;
     global.USE_BACKBONE = false;
-    global.TEST = true;
+    global.TEST = false;
     global.BOOTSTRAPPED = true;
 if(K.is.ios){
-    K.watch("10.66.23.180", "8128");
+    K.watch("192.168.10.189", "8128");
 }
 })(this);

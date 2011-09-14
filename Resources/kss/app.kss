@@ -1,3 +1,24 @@
 window {
   background-color: #fff;
 }
+
+.board {
+	top: 10;
+	left: 10;
+}
+
+.boardMessages {
+	top: 30;
+	layout: vertical;
+}
+
+.boardMessage {
+	height: 20;
+	top: 10;
+}
+
+.boardTitle {
+	top: 0;
+	height: auto;
+	font-weight: bold;
+}

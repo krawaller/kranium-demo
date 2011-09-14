@@ -1,4 +1,5 @@
-- var title = "Things"
-label= title
-view
-  label hej
+view.board
+  label.boardTitle Board
+  view.boardMessages
+    - each msg, user in users
+      label.boardMessage= user + ' says ' + msg

@@ -6,12 +6,27 @@ K({
 	tabs: [{
 		title: 'Coffee Demo',
 		window: {
-			//type: 'window',
-			id: 'hu',
-			//children: ['label heja']
+			children: [{
+				type: 'coffeedemo',
+				text: 'What goes around'
+			}]
+		}
+	},{
+		title: 'Jade',
+		window: {
+			children: [
+				'test.jade'.jaded({ 
+					users: { 
+						jacob: 'yeah', 
+						conny: 'hi', 
+						aida: 'hello' 
+					}
+				})
+			]
 		}
 	}]
 }).open();
 
+//K.log('jadey', K.stringify();
 
-J('test.jade', {users: { jacob: 'yeah' }}).css({ top: 10, left: 20 }).appendTo('#hu');
+//J('test.jade', {users: { jacob: 'yeah' }}).css({ top: 10, left: 20 }).appendTo('#hu');
