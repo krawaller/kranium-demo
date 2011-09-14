@@ -15,7 +15,7 @@ K({
 		title: 'Jade',
 		window: {
 			children: [
-				/*K.jade('test.jade', { 
+				K.jade('test.jade', { 
 					users: { 
 						jacob: 'yeah',
 						david: 'what',
@@ -23,12 +23,8 @@ K({
 						aida: 'hello',
 						calle: 'yup'
 					}
-				})*/
+				})
 			]
 		}
 	}]
 }).open();
-
-//K.log('jadey', K.stringify();
-
-//J('test.jade', {users: { jacob: 'yeah' }}).css({ top: 10, left: 20 }).appendTo('#hu');
