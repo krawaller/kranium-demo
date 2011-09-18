@@ -2,14 +2,22 @@ Ti.include("/kranium/lib/kranium.js");
 
 K.initBackbone();
 
+K.settings.useCustomAndroidNavBar = true;
+
 K({
 	type: 'tabgroup',
 	tabs: [{
-		title: 'Backbone',
+		title: 'Shims',
 		window: {
-			type: 'backbonedemo2'
+			type: 'shims'
 		}
 	},{
+		title: 'Backbone',
+		window: {
+			type: 'backbonedemo'
+		}
+	},
+	{
 		title: 'Coffee',
 		window: {
 			title: 'Coffee Demo',
@@ -18,21 +26,21 @@ K({
 				text: 'What goes around'
 			}]
 		}
-	},{
-		title: 'Jade',
-		window: {
-			title: 'Jade Demo',
-			children: [
-				K.jade('test.jade', { 
-					users: { 
-						jacob: 'yeah',
-						david: 'what',
-						conny: 'hi', 
-						aida: 'hello',
-						calle: 'yup'
-					}
-				})
-			]
-		}
-	}]
+	}].concat(K.is.ios ? [{
+			title: 'Jade',
+			window: {
+				title: 'Jade Demo',
+				children: [
+					K.jade('test.jade', { 
+						users: { 
+							jacob: 'yeah',
+							david: 'what',
+							conny: 'hi', 
+							aida: 'hello',
+							calle: 'yup'
+						}
+					})
+				]
+			}
+		}] : [])
 }).open();

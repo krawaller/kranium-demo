@@ -3301,7 +3301,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 /*** ANDROIDSHIM ***/
 (function(){
 
-if(K.is.android){
+if(true || K.is.android){
 	
 	K.style('kranium/lib/kss/androidshim.kss');
 	

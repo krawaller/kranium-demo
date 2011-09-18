@@ -4,7 +4,6 @@ exports.Class = BackboneView.extend({
 
 	events: {
 		click: function(e){
-			//K.log(e);
 			var model = todos.get(e.rowData._modelId) || todos.getByCid(e.rowData._modelCid);
 			model.set({ hasCheck: !model.get('hasCheck') });
 		},

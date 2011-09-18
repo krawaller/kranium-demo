@@ -1,6 +1,12 @@
 window {
   background-color: #fff;
+  bar-color: #23aaff;
 }
+
+.toolbar {
+	background-color: #555;
+}
+
 
 .board {
 	top: 10;
