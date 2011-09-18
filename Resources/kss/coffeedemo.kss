@@ -6,14 +6,14 @@
 .swipeme {
   border-radius: 5;
   background-color: #f00;
-  text-align: center;
+  text-align: left;
 }
 .clickme {
   top: 10;
 }
 .coffeetable {
   height: 200;
-  border-width: 1;
+  border-width: 2;
   border-color: #ccc;
   border-radius: 7;
 }

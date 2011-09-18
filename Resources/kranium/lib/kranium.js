@@ -1,26 +1,5 @@
 /*** LICENSE ***/
 /*!
- * Kranium
- * Copyright (c) 2011 Jacob Waller <jacob@krawaller.se>
- * MIT Licensed
- * 
- * Portions of the copyright belongs to the following entities
- * Simple JavaScript Inheritance (c) 2008 John Resig 
- * "mini" Selector Engine (c) 2009 James Padolsey
- * Jade (c) 2009-2010 TJ Holowaychuk <tj@vision-media.ca>
- * Jasmine (c) 2008-2011 Pivotal Labs
- * Zepto (c) 2010, 2011 Thomas Fuchs
- * JSConsole (c) 2010 Remy Sharp, http://jsconsole.com
- * selectivizr v1.0.0 - (c) Keith Clark
- * Flexie (c) 2010 Richard Herrera
- * changeColor (c) 2010 eyelidlessness
- * TitaniumReporter (c) 2011 Guilherme Chapiewski
- */
-
-
-
-/*** CORE ***/
-/*!
 The core module of Kranium is heavily based on Zepto, which has the following license:
 
 Copyright (c) 2010, 2011 Thomas Fuchs
@@ -524,14 +503,18 @@ var reTiObject = /^(\[object Ti|\[Ti\.)/,
 		append: function(els){
 			var parent = this[0],
 				els = arrayify(els);
-			switch(parent){
-				default:
-					els.forEach(function(el){
-						el = K.create(el);
-						parent.add(el); 	
-					});
-					break;
+				
+			if(parent){
+				switch(parent){
+					default:
+						els.forEach(function(el){
+							el = K.create(el);
+							parent.add(el); 	
+						});
+						break;
+				}
 			}
+			
 			return this;
 		},
 		
@@ -777,6 +760,145 @@ var reTiObject = /^(\[object Ti|\[Ti\.)/,
 
 
 
+/*** CORE ***/
+(function($){
+  var $$ = $.qsa, handlers = {}, _zid = 1;
+  function zid(element) {
+    return element._zid || (element._zid = _zid++);
+  }
+  function findHandlers(element, event, fn, selector) {
+    event = parse(event);
+    if (event.ns) var matcher = matcherFor(event.ns);
+    return (handlers[zid(element)] || []).filter(function(handler) {
+      return handler
+        && (!event.e  || handler.e == event.e)
+        && (!event.ns || matcher.test(handler.ns))
+        && (!fn       || handler.fn == fn)
+        && (!selector || handler.sel == selector);
+    });
+  }
+  function parse(event) {
+    var parts = ('' + event).split('.');
+    return {e: parts[0], ns: parts.slice(1).sort().join(' ')};
+  }
+  function matcherFor(ns) {
+    return new RegExp('(?:^| )' + ns.replace(' ', ' .* ?') + '(?: |$)');
+  }
+
+  function add(element, events, fn, selector, delegate){
+    var id = zid(element), set = (handlers[id] || (handlers[id] = []));
+    events.split(/\s/).forEach(function(event){
+      var callback = delegate || fn;
+      //var proxyfn = function(event) { return callback(event, event.data) };
+      var proxyfn = function(event) { return callback.call(element, event, event.data) };
+      var handler = $.extend(parse(event), {fn: fn, proxy: proxyfn, sel: selector, del: delegate, i: set.length});
+      set.push(handler);
+      element.addEventListener(handler.e, proxyfn, false);
+    });
+  }
+  function remove(element, events, fn, selector){
+    var id = zid(element);
+    (events || '').split(/\s/).forEach(function(event){
+      findHandlers(element, event, fn, selector).forEach(function(handler){
+        delete handlers[id][handler.i];
+        element.removeEventListener(handler.e, handler.proxy, false);
+      });
+    });
+  }
+
+  $.event = { add: add, remove: remove }
+
+  $.fn.bind = function(event, callback){
+    return this.each(function(){
+      add(this, event, callback);
+    });
+  };
+  $.fn.unbind = function(event, callback){
+    return this.each(function(){
+      remove(this, event, callback);
+    });
+  };
+  $.fn.one = function(event, callback){
+    return this.each(function(){
+      var self = this;
+      //add(this, event, function wrapper(wrapperEventObject){
+      add(this, event, function wrapper(wrapperEventObject){
+        //callback();
+        callback.call(this, wrapperEventObject, wrapperEventObject && wrapperEventObject.data)
+        remove(self, event, arguments.callee);
+      });
+    });
+  };
+
+  var eventMethods = ['preventDefault', 'stopImmediatePropagation', 'stopPropagation'];
+  function createProxy(event) {
+    var proxy = $.extend({originalEvent: event}, event);
+    eventMethods.forEach(function(key) {
+      proxy[key] = function() {return event[key].apply(event, arguments)};
+    });
+    return proxy;
+  }
+
+  /*$.fn.delegate = function(selector, event, callback){
+    return this.each(function(i, element){
+      add(element, event, callback, selector, function(e, data){
+        var target = e.target, nodes = $$(element, selector);
+        while (target && nodes.indexOf(target) < 0) target = target.parentNode;
+        if (target && !(target === element) && !(target === document)) {
+          callback.call(target, $.extend(createProxy(e), {
+            currentTarget: target, liveFired: element
+          }), data);
+        }
+      });
+    });
+  };
+  $.fn.undelegate = function(selector, event, callback){
+    return this.each(function(){
+      remove(this, event, callback, selector);
+    });
+  }
+
+  $.fn.live = function(event, callback){
+    $(document.body).delegate(this.selector, event, callback);
+    return this;
+  };
+  $.fn.die = function(event, callback){
+    $(document.body).undelegate(this.selector, event, callback);
+    return this;
+  };
+
+  $.fn.trigger = function(event, data){
+    return this.each(function(){
+      var e = document.createEvent('Events');
+      e.initEvent(event, true, true)
+      e.data = data;
+      this.dispatchEvent(e);
+    });
+  };*/
+})(Zepto);
+
+/*** EVENT ***/
+/*!
+ * Kranium
+ * Copyright (c) 2011 Jacob Waller <jacob@krawaller.se>
+ * Copyright (c) 2011 David Waller <david@krawaller.se>
+ * MIT Licensed
+ * 
+ * Portions of the copyright belongs to the following entities
+ * Simple JavaScript Inheritance (c) 2008 John Resig 
+ * "mini" Selector Engine (c) 2009 James Padolsey
+ * Jade (c) 2009-2010 TJ Holowaychuk <tj@vision-media.ca>
+ * Jasmine (c) 2008-2011 Pivotal Labs
+ * Zepto (c) 2010, 2011 Thomas Fuchs
+ * JSConsole (c) 2010 Remy Sharp, http://jsconsole.com
+ * selectivizr v1.0.0 - (c) Keith Clark
+ * Flexie (c) 2010 Richard Herrera
+ * changeColor (c) 2010 eyelidlessness
+ * TitaniumReporter (c) 2011 Guilherme Chapiewski
+ */
+
+
+
 /*** SETTINGS ***/
 (function(){
 	
@@ -993,7 +1115,7 @@ K.parseJSON = JSON.parse;
 		} else {
 			Ti.UI.createNotification({
 				message: msg,
-				duration: Ti.UI.NOTIFICATION_DURATION_LONG,
+				duration: Ti.UI.NOTIFICATION_DURATION_SHORT,
 				offsetX: 0,
 				offsetY: 30
 			}).show();
@@ -1017,9 +1139,17 @@ K.parseJSON = JSON.parse;
 			hint = null;
 		}
 	
-		return (cache[key] = (Titanium.Locale.getString(key, hint)||'').replace(/(^|[^\w\d])@([A-Za-z_\-]+)\b/g, function($0, $1, name){
-			return ($1||'')+modifier(obj && typeof obj[name] !== 'undefined' ? obj[name] : Titanium.Locale.getString(name));
-		}));
+		var doCache = true,
+			ret = ((Titanium.Locale.getString(key, hint || key) || '').replace(/(^|[^\w\d])@([A-Za-z_\-]+)\b/g, function($0, $1, name){
+				doCache = false;
+				return ($1||'')+modifier(obj && typeof obj[name] !== 'undefined' ? obj[name] : Titanium.Locale.getString(name));
+			}));
+			
+		if(doCache){
+			cache[key] = ret;
+		}
+	
+		return ret;
 	};
 })();
 
@@ -1230,6 +1360,195 @@ String.prototype.esc = function(obj, func, matcher){
 //})(this);
 
 /*** QSA ***/
+/*!
+ * "mini" Selector Engine
+ * Copyright (c) 2009 James Padolsey
+ * -------------------------------------------------------
+ * Dual licensed under the MIT and GPL licenses.
+ *    - http://www.opensource.org/licenses/mit-license.php
+ *    - http://www.gnu.org/copyleft/gpl.html
+ * -------------------------------------------------------
+ * Version: 0.01 (BETA)
+ */
+
+$.qsa = $$ = (function(document, global){
+	
+	var me = document;
+	[
+		{ fn: "getElementsByClassName", arrName: "elsByClassName" },
+		{ fn: "getElementsByTagName", arrName: "elsByName" },
+		{ fn: "getElementById", arrName: "elsById" }
+	].forEach(function(o){
+		var name = o.fn, 
+			arrName = o.arrName,
+			singular = (o.fn == "getElementById"), 
+			a, 
+			res;
+
+		me[name] = global[name] = function(s, context){
+			var arr = K[arrName],
+				res = null;
+
+			if((a = arr[s]) && (a = (Array.isArray(a) ? a : [a]))){
+				if(context){
+					res = a.filter(function(el){
+						do {
+							if(el._uuid === context._uuid){ return true; }
+						} while((el = (el.getParent()) ));
+						return false;
+					});
+				} else {
+					res = a;
+				}
+			}
+
+			return singular ? Array.isArray(res) && res[0] : res;
+		};
+	});
+	
+	
+    var snack = /(?:[\w\-\\.#]+)+(?:\[\w+?=([\'"])?(?:\\\1|.)+?\1\])?|\*|>/ig,
+        exprClassName = /^(?:[\w\-_]+)?\.([\w\-_]+)/,
+        exprId = /^(?:[\w\-_]+)?#([\w\-_]+)/,
+        exprNodeName = /^([\w\*\-_]+)/,
+        na = [null,null];
+
+    function _find(selector, context) {
+        /**
+         * This is what you call via x()
+         * Starts everything off...
+         */
+        var simple = /^[\w\-_#]+$/.test(selector);
+		
+        if (selector.indexOf(',') > -1) {
+            var split = selector.split(/,/g), ret = [], sIndex = 0, len = split.length;
+            for(; sIndex < len; ++sIndex) {
+                ret = ret.concat( _find(split[sIndex], context) );
+            }
+            return unique(ret);
+        }
+
+        var parts = selector.match(snack),
+            part = parts.pop(),
+            id = (part.match(exprId) || na)[1],
+            className = !id && (part.match(exprClassName) || na)[1],
+            nodeName = !id && (part.match(exprNodeName) || na)[1],
+            collection,
+			el;
+
+        if (className && !nodeName) {
+            collection = realArray(getElementsByClassName(className, context));
+        } else {
+            collection = !id && realArray(getElementsByTagName(nodeName||'*', context));
+			if (className) {
+                collection = filterByAttr(collection, 'className', RegExp('(^|\\s)' + className + '(\\s|$)'));
+            }
+            if (id) {
+                return (el = getElementById(id, context)) ? [el] : [];
+            }
+        }
+		
+		var ret = parts[0] && collection[0] ? filterParents(parts, collection, false, context) : collection;
+		return ret;
+    }
+
+    function realArray(c) { return Array.prototype.slice.call(c); }
+
+    function filterParents(selectorParts, collection, direct, context) {
+        /**
+         * This is where the magic happens.
+         * Parents are stepped through (upwards) to
+         * see if they comply with the selector.
+         */
+
+        var parentSelector = selectorParts.pop()||'';
+        if (parentSelector === '>') { return filterParents(selectorParts, collection, true, context); }
+
+        var ret = [],
+            r = -1,
+            id = (parentSelector.match(exprId) || na)[1],
+            className = !id && (parentSelector.match(exprClassName) || na)[1],
+            nodeName = !id && (parentSelector.match(exprNodeName) || na)[1],
+            cIndex = -1,
+            node, parent,
+            matches;
+
+        while ( (node = collection[++cIndex]) ) {
+            if(context){
+				if(node.getParent()._uuid == context._uuid){
+					ret[++r] = node;
+				}
+			} else {
+				parent = node.getParent();
+	            do {
+	                matches = !nodeName || nodeName === '*' || nodeName === parent._type;
+	                matches = matches && (!id || parent._id === id);
+	                matches = matches && (!className || RegExp('(^|\\s)' + className + '(\\s|$)').test(parent.className));
+	                if (direct || matches) { break; }
+	            } while ( (parent = parent.getParent()) );
+	            if (matches) { ret[++r] = node; }
+			}
+			
+        }
+        return selectorParts[0] && ret[0] ? filterParents(selectorParts, ret) : ret;
+    }
+
+
+    var unique = (function() {
+		var uid = +new Date(),
+			data = (function() {
+
+			var n = 1;
+			return function(elem) {
+				var cacheIndex = elem[uid],
+					nextCacheIndex = n++;
+
+				if (!cacheIndex) {
+					elem[uid] = nextCacheIndex;
+					return true;
+				}
+				return false;
+			};
+
+		})();
+
+		return function(arr) {
+			/**
+			 * Returns a unique array
+			 */
+			var length = arr.length,
+				ret = [],
+				r = -1,
+				i = 0,
+				item;
+
+			for (; i < length; ++i) {
+				item = arr[i];
+				if (data(item)) { ret[++r] = item; }
+			}
+
+			uid += 1;
+			return ret;
+		};
+	})();
+
+    function filterByAttr(collection, attr, regex) {
+        /**
+         * Filters a collection by an attribute.
+         */
+        var i = -1, node, r = -1, ret = [];
+        while ( (node = collection[++i]) ) {
+            if (regex.test(node[attr])) {
+                ret[++r] = node;
+            }
+        }
+        return ret;
+    }
+    return _find;
+
+})(this, this);
+
+/*** KLASS ***/
 /* Simple JavaScript Inheritance
  * By John Resig http://ejohn.org/
  * MIT Licensed.
@@ -1324,7 +1643,7 @@ String.prototype.esc = function(obj, func, matcher){
 
 })(this);
 
-/*** KLASS ***/
+/*** FILE ***/
 /**
  * Define file module
  */
@@ -1375,7 +1694,7 @@ String.prototype.esc = function(obj, func, matcher){
 
 })();
 
-/*** FILE ***/
+/*** STYLE ***/
 /**
  * Define style module
  */
@@ -1673,7 +1992,7 @@ String.prototype.esc = function(obj, func, matcher){
 
 })(this);
 
-/*** STYLE ***/
+/*** CREATE ***/
 /**
  * Define create module
  */
@@ -1699,9 +2018,16 @@ String.prototype.esc = function(obj, func, matcher){
 	 * @returns {K.UI.Module}
 	 */
 	function defaultInit(o){
-		var t = extend({}, this, { collection: false });
-		var el = (creators[this.type]||K.create)(o ? extend(t, o) : t);
-		el._props = o;
+		var props = extend({}, this, o);
+		if(props.collection || this.collection){
+			//delete props.collection;
+			//delete this.collection
+		}
+		
+		K.log('sending', Object.keys(props), this.type)
+		
+		var el = (creators[this.type]||K.create)(props);
+		el._props = props;
 	    return (this.el = el);
 	}
 
@@ -2120,8 +2446,10 @@ String.prototype.esc = function(obj, func, matcher){
 		instances = {};
 		
 	K._wrapCustomCreator = function(creator, type){
-		return function(o){		
+		return function(o){
 			delete o.type;
+			o._inst = instanceCounter;
+			//delete o.collection;
 			var obj = new creator(o),
 				el = obj.el;
 
@@ -2130,7 +2458,7 @@ String.prototype.esc = function(obj, func, matcher){
 			};
 			(K.elsByName[type]||(K.elsByName[type] = [])).push(el);
 			el.inst = obj;
-			el._inst = instanceCounter;
+			
 			instances[instanceCounter] = obj;
 			instanceCounter++;
 			return el;
@@ -2155,6 +2483,7 @@ String.prototype.esc = function(obj, func, matcher){
 	 * @returns {TiObject||Array}
 	 */
 	K.create = function(o, def, overriders){
+		
 		if(o instanceof Array){ return o.map(function(el){ return K.create(el, def); }); }
 		if(o && o._type){ return o; }
 		
@@ -2192,7 +2521,7 @@ String.prototype.esc = function(obj, func, matcher){
 	
 })(this);
 
-/*** CREATE ***/
+/*** AJAX ***/
 /**
  * Define AJAX module
  */
@@ -2278,7 +2607,6 @@ String.prototype.esc = function(obj, func, matcher){
 							catch(e){
 								Ti.API.error(e);
 								Ti.API.error(text);
-								throw "WTF?!"+e;
 							}
 							break;
 
@@ -2365,195 +2693,6 @@ String.prototype.esc = function(obj, func, matcher){
 	};
 
 })(this);
-
-/*** AJAX ***/
-/*!
- * "mini" Selector Engine
- * Copyright (c) 2009 James Padolsey
- * -------------------------------------------------------
- * Dual licensed under the MIT and GPL licenses.
- *    - http://www.opensource.org/licenses/mit-license.php
- *    - http://www.gnu.org/copyleft/gpl.html
- * -------------------------------------------------------
- * Version: 0.01 (BETA)
- */
-
-$.qsa = $$ = (function(document, global){
-	
-	var me = document;
-	[
-		{ fn: "getElementsByClassName", arrName: "elsByClassName" },
-		{ fn: "getElementsByTagName", arrName: "elsByName" },
-		{ fn: "getElementById", arrName: "elsById" }
-	].forEach(function(o){
-		var name = o.fn, 
-			arrName = o.arrName,
-			singular = (o.fn == "getElementById"), 
-			a, 
-			res;
-
-		me[name] = global[name] = function(s, context){
-			var arr = K[arrName],
-				res = null;
-
-			if((a = arr[s]) && (a = (Array.isArray(a) ? a : [a]))){
-				if(context){
-					res = a.filter(function(el){
-						do {
-							if(el._uuid === context._uuid){ return true; }
-						} while((el = (el.getParent()) ));
-						return false;
-					});
-				} else {
-					res = a;
-				}
-			}
-
-			return singular ? Array.isArray(res) && res[0] : res;
-		};
-	});
-	
-	
-    var snack = /(?:[\w\-\\.#]+)+(?:\[\w+?=([\'"])?(?:\\\1|.)+?\1\])?|\*|>/ig,
-        exprClassName = /^(?:[\w\-_]+)?\.([\w\-_]+)/,
-        exprId = /^(?:[\w\-_]+)?#([\w\-_]+)/,
-        exprNodeName = /^([\w\*\-_]+)/,
-        na = [null,null];
-
-    function _find(selector, context) {
-        /**
-         * This is what you call via x()
-         * Starts everything off...
-         */
-        var simple = /^[\w\-_#]+$/.test(selector);
-		
-        if (selector.indexOf(',') > -1) {
-            var split = selector.split(/,/g), ret = [], sIndex = 0, len = split.length;
-            for(; sIndex < len; ++sIndex) {
-                ret = ret.concat( _find(split[sIndex], context) );
-            }
-            return unique(ret);
-        }
-
-        var parts = selector.match(snack),
-            part = parts.pop(),
-            id = (part.match(exprId) || na)[1],
-            className = !id && (part.match(exprClassName) || na)[1],
-            nodeName = !id && (part.match(exprNodeName) || na)[1],
-            collection,
-			el;
-
-        if (className && !nodeName) {
-            collection = realArray(getElementsByClassName(className, context));
-        } else {
-            collection = !id && realArray(getElementsByTagName(nodeName||'*', context));
-			if (className) {
-                collection = filterByAttr(collection, 'className', RegExp('(^|\\s)' + className + '(\\s|$)'));
-            }
-            if (id) {
-                return (el = getElementById(id, context)) ? [el] : [];
-            }
-        }
-		
-		var ret = parts[0] && collection[0] ? filterParents(parts, collection, false, context) : collection;
-		return ret;
-    }
-
-    function realArray(c) { return Array.prototype.slice.call(c); }
-
-    function filterParents(selectorParts, collection, direct, context) {
-        /**
-         * This is where the magic happens.
-         * Parents are stepped through (upwards) to
-         * see if they comply with the selector.
-         */
-
-        var parentSelector = selectorParts.pop()||'';
-        if (parentSelector === '>') { return filterParents(selectorParts, collection, true, context); }
-
-        var ret = [],
-            r = -1,
-            id = (parentSelector.match(exprId) || na)[1],
-            className = !id && (parentSelector.match(exprClassName) || na)[1],
-            nodeName = !id && (parentSelector.match(exprNodeName) || na)[1],
-            cIndex = -1,
-            node, parent,
-            matches;
-
-        while ( (node = collection[++cIndex]) ) {
-            if(context){
-				if(node.getParent()._uuid == context._uuid){
-					ret[++r] = node;
-				}
-			} else {
-				parent = node.getParent();
-	            do {
-	                matches = !nodeName || nodeName === '*' || nodeName === parent._type;
-	                matches = matches && (!id || parent._id === id);
-	                matches = matches && (!className || RegExp('(^|\\s)' + className + '(\\s|$)').test(parent.className));
-	                if (direct || matches) { break; }
-	            } while ( (parent = parent.getParent()) );
-	            if (matches) { ret[++r] = node; }
-			}
-			
-        }
-        return selectorParts[0] && ret[0] ? filterParents(selectorParts, ret) : ret;
-    }
-
-
-    var unique = (function() {
-		var uid = +new Date(),
-			data = (function() {
-
-			var n = 1;
-			return function(elem) {
-				var cacheIndex = elem[uid],
-					nextCacheIndex = n++;
-
-				if (!cacheIndex) {
-					elem[uid] = nextCacheIndex;
-					return true;
-				}
-				return false;
-			};
-
-		})();
-
-		return function(arr) {
-			/**
-			 * Returns a unique array
-			 */
-			var length = arr.length,
-				ret = [],
-				r = -1,
-				i = 0,
-				item;
-
-			for (; i < length; ++i) {
-				item = arr[i];
-				if (data(item)) { ret[++r] = item; }
-			}
-
-			uid += 1;
-			return ret;
-		};
-	})();
-
-    function filterByAttr(collection, attr, regex) {
-        /**
-         * Filters a collection by an attribute.
-         */
-        var i = -1, node, r = -1, ret = [];
-        while ( (node = collection[++i]) ) {
-            if (regex.test(node[attr])) {
-                ret[++r] = node;
-            }
-        }
-        return ret;
-    }
-    return _find;
-
-})(this, this);
 
 /*** LIVE ***/
 /**
@@ -2799,16 +2938,6 @@ $.qsa = $$ = (function(document, global){
 
 /*** STRINGIFY ***/
 /**
- * Define end module
- */
-
-(function(global){
-	Ti.include('/kranium/kranium-generated-bootstrap.js');
-})(this);
-
-
-/*** END ***/
-/**
  * Define stringify module
  */
 
@@ -2906,6 +3035,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 	K.stringify = stringify;
 
 })(this);
+
+/*** END ***/
+/**
+ * Define end module
+ */
+
+(function(global){
+	Ti.include('/kranium/kranium-generated-bootstrap.js');
+})(this);
+
 
 /*** TESTER ***/
 /**
