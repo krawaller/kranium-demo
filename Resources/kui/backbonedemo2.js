@@ -57,7 +57,8 @@ exports.Class = Window.extend({
 	},
 	
 	updateTitleLabel: function(){
-		this.titleLabel.text = todos.length + ' todos';
+		var completed = todos.pluck('hasCheck').filter(function(val){ return !!val }).length;
+		this.titleLabel.text = completed + ' / ' + todos.length + ' todos';
 	}
 	
 });

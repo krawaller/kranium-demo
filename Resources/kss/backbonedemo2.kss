@@ -3,8 +3,11 @@
 	shadow-color: #aa000000;
 	shadow-offset-y: -1;
 	shadow-offset-x: 0;
-	font-size: 20;
+	font-size: 20dp;
 	font-weight: bold;
+	width: 120dp;
+	height: 30dp;
+	text-align: right;
 }
 
 .todolist {
@@ -20,6 +23,20 @@
 .todoInputTextField {
 	border-style: Ti.UI.INPUT_BORDERSTYLE_ROUNDED;
 	height: 30dp;
-	width: 200dp;
+	width: 160dp;
 	hint-text: New todo;
+	color: #000;
+	text-align: left;
+}
+
+.toolbar {
+	background-color: #23aaff;
+}
+
+.todoInputTextField:android {
+	height: 40dp;
+}
+
+.toolbar:android {
+	height: 44dp;
 }
