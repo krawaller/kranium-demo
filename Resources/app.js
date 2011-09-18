@@ -9,9 +9,10 @@ K({
 		window: {
 			type: 'backbonedemo2'
 		}
-	}/*,{
-		title: 'Coffee Demo',
+	},{
+		title: 'Coffee',
 		window: {
+			title: 'Coffee Demo',
 			children: [{
 				type: 'coffeedemo',
 				text: 'What goes around'
@@ -20,6 +21,7 @@ K({
 	},{
 		title: 'Jade',
 		window: {
+			title: 'Jade Demo',
 			children: [
 				K.jade('test.jade', { 
 					users: { 
@@ -32,5 +34,5 @@ K({
 				})
 			]
 		}
-	}*/]
+	}]
 }).open();
