@@ -1,0 +1,25 @@
+.titleLabel {
+	color: #fff;
+	shadow-color: #aa000000;
+	shadow-offset-y: -1;
+	shadow-offset-x: 0;
+	font-size: 20;
+	font-weight: bold;
+}
+
+.todolist {
+	top: 44dp;
+}
+
+.todoToolbar {
+	top: 0;
+	border-bottom: true;
+	border-top: false;
+}
+
+.todoInputTextField {
+	border-style: Ti.UI.INPUT_BORDERSTYLE_ROUNDED;
+	height: 30dp;
+	width: 200dp;
+	hint-text: New todo;
+}
