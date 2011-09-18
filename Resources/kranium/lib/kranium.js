@@ -3301,7 +3301,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.*/
 /*** ANDROIDSHIM ***/
 (function(){
 
-if(true || K.is.android){
+if(K.is.android){
 	
 	K.style('kranium/lib/kss/androidshim.kss');
 	
@@ -3319,7 +3319,7 @@ if(true || K.is.android){
 				delete opts.click;
 			}
 
-			var	labelWidth = (opts.width || Ti.Platform.displayCaps.platformWidth) / opts.labels.length,
+			var	labelWidth = (dipToPx(opts.width) || Ti.Platform.displayCaps.platformWidth) / opts.labels.length,
 				backgroundColor = opts.backgroundColor || K.getStyle(null, type).backgroundColor || '#ccc',
 				selectedBackgroundColor = K.changeColor(backgroundColor, 0.2, true),
 				labels = (opts.labels||[]).map(function(o, i){
@@ -3353,6 +3353,11 @@ if(true || K.is.android){
 						};
 						
 						events.touchend = function(){
+							if(type === 'tabbedbar' && bar.index === i){ return; }
+							this.backgroundColor = backgroundColor;
+						}
+						
+						events.touchcancel = function(){
 							if(type === 'tabbedbar' && bar.index === i){ return; }
 							this.backgroundColor = backgroundColor;
 						}
@@ -3484,22 +3489,22 @@ if(true || K.is.android){
 				numSpacers++;
 				return o;
 			} else {
-				var itemWidth = o.width || K.getStyle({
+				var itemWidth = dipToPx(o.width || K.getStyle({
 					type: o.type,
 					className: 'toolbarItem ' + (o.className||o.cls||'')
-				}).width;
+				}).width);
 				
 				if(itemWidth){
-					widthSum += dipToPx(itemWidth);
+					widthSum += itemWidth;
 				} else {
 					numSpacers++;
 				}
-			}
+			}			
 		});
 		
 		var left = 0,
 			spacerWidth = (toolbarWidth - widthSum)/numSpacers;
-		
+					
 		var items = [];
 		(opts.items||[]).forEach(function(o, i){
 			if(o === 'spacer'){
@@ -3511,15 +3516,15 @@ if(true || K.is.android){
 				o.className = 'toolbarItem ' + (o.className||'');
 
 				o.left = left;
-				o.width = o.width || K.getStyle({
+				
+				var width = dipToPx(o.width || K.getStyle({
 					type: o.type,
 					className: 'toolbarItem ' + (o.className||o.cls||'')
-				}).width || spacerWidth;
+				}).width || spacerWidth);
+				o.width = width;
 				
 				var el = K.create(o);
-
 				left += dipToPx(el.width||0);
-								
 				items.push(el);
 			}
 		});

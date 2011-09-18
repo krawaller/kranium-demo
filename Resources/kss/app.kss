@@ -7,6 +7,9 @@ window {
 	background-color: #555;
 }
 
+.toolbarButton {
+	style: Ti.UI.iPhone.SystemButtonStyle.BORDERED;
+}
 
 .board {
 	top: 10;

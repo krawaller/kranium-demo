@@ -18,9 +18,11 @@ exports.Class = Window.extend({
 		};
 		
 		this.children = [{
-			top: 10,
+			top: '40dp',
 			type: 'tabbedbar',
+			height: '40dp',
 			backgroundColor: '#0a0',
+			index: 0,
 			labels: ['one', 'two', 'three'],
 			click: function(e){
 				K.log(e);
@@ -28,8 +30,9 @@ exports.Class = Window.extend({
 		},
 		
 		{
-			top: 80,
+			top: '120dp',
 			type: 'buttonbar',
+			height: '40dp',
 			labels: ['one', 'two', 'three'],
 			click: function(e){
 				K.log(e);
@@ -37,6 +40,8 @@ exports.Class = Window.extend({
 		},
 		
 		{
+			top: '200dp',
+			height: '44dp',
 			type: 'toolbar',
 			items: [
 			'spacer',
@@ -51,9 +56,37 @@ exports.Class = Window.extend({
 			},
 			'spacer'
 			]
-		}
+		},
 		
-		];
+		
+		{
+			top: '280dp',
+			height: '44dp',
+			type: 'toolbar',
+			items: [
+			{
+				
+				type: 'tabbedbar',
+				height: '44dp',
+				width: '140dp',
+				backgroundColor: '#0a0',
+				index: 0,
+				labels: ['one', 'two', 'three'],
+				click: function(e){
+					K.log(e);
+				}
+			},
+			'spacer',
+			{
+				type: 'buttonbar',
+				height: '44dp',
+				width: '140dp',
+				labels: ['one', 'two', 'three'],
+				click: function(e){
+					K.log(e);
+				}
+			}]
+		}];
 		
 		this._super(o);
 	}
