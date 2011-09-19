@@ -10,8 +10,13 @@
 		}); 
 
 		describe('TabGroup', function(){
-			it('Has tabgroup', function(){ expect(K('tabgroup').length).toBeGreaterThan(0); });
-			it('TabGroup.activeTab.title === "test"', function(){ expect(K('tabgroup').get(0).activeTab.title).toEqual("Coffee Demo"); });
+			it('Has tabgroup', function(){ 
+				expect(K('tabgroup').length).toBeGreaterThan(0); 
+			});
+			
+			it('First tab title should be "Shims"', function(){ 
+				expect(K('tabgroup').get(0).activeTab.title).toEqual("Shims"); 
+			});
 		});
 	});
 	

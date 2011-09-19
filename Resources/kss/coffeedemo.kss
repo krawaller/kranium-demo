@@ -1,19 +1,19 @@
 .demoitem {
-  width: 200;
+  width: 240;
   height: 40;
   top: 10;
 }
 .swipeme {
-  border-radius: 5;
+  border-radius: 15;
   background-color: #f00;
-  text-align: left;
+  text-align: right;
 }
 .clickme {
   top: 10;
 }
 .coffeetable {
   height: 200;
-  border-width: 2;
+  border-width: 4;
   border-color: #ccc;
   border-radius: 7;
 }

@@ -3,12 +3,16 @@ window {
   bar-color: #23aaff;
 }
 
-.toolbar {
-	background-color: #555;
+tabbedbar {
+	style: Ti.UI.iPhone.SystemButtonStyle.BAR;
 }
 
-.toolbarButton {
-	style: Ti.UI.iPhone.SystemButtonStyle.BORDERED;
+buttonbar {
+	style: Ti.UI.iPhone.SystemButtonStyle.BAR;
+}
+
+.toolbar {
+	background-color: #555;
 }
 
 .board {

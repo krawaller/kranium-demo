@@ -2,8 +2,6 @@ Ti.include("/kranium/lib/kranium.js");
 
 K.initBackbone();
 
-K.settings.useCustomAndroidNavBar = true;
-
 K({
 	type: 'tabgroup',
 	tabs: [{

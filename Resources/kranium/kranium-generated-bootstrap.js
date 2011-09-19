@@ -6,6 +6,6 @@
     global.TEST = false;
     global.BOOTSTRAPPED = true;
 if(K.is.ios){
-    K.watch("10.10.10.42", "8128");
+    K.watch("10.10.10.2", "8128");
 }
 })(this);
