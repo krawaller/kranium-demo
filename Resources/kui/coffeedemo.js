@@ -1,5 +1,6 @@
+var K = require('kranium/init').K;
 (function() {
-  exports.Class = View.extend({
+  exports.Class = K.UI.View.extend({
     layout: "vertical",
     cubeRow: function(num) {
       return {

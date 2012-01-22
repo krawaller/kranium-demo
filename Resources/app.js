@@ -1,6 +1,5 @@
-Ti.include("/kranium/lib/kranium.js");
+var K = require("kranium/init").init({});
 
-K.initBackbone();
 
 K({
 	type: 'tabgroup',
@@ -9,12 +8,14 @@ K({
 		window: {
 			type: 'shims'
 		}
-	},{
+	},
+	// Backbone not ported to 0.2
+	/*{
 		title: 'Backbone',
 		window: {
 			type: 'backbonedemo'
 		}
-	},
+	},*/
 	{
 		title: 'Coffee',
 		window: {
@@ -24,7 +25,7 @@ K({
 				text: 'What goes around'
 			}]
 		}
-	}].concat(K.is.ios ? [{
+	}].concat(true && K.is.ios ? [{
 			title: 'Jade',
 			window: {
 				title: 'Jade Demo',

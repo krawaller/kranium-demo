@@ -145,6 +145,7 @@ valueAttrByTagName = {
 	label: 'text',
 	textfield: 'value',
 	button: 'title',
+	row: 'title',
 	def: 'text'
 };
 function getValueAttr(tagName){
@@ -320,7 +321,7 @@ Compiler.prototype = {
 
 	var hasChildren = tag.block && tag.block.nodes && tag.block.nodes.length;
 	if(hasChildren){
-		this.buf.push(', children: (function(){ var __els = []; ');
+		this.buf.push(', ' + (name == 'tableview' ? 'data' : 'children')  + ': (function(){ var __els = []; ');
 	}
 
     this.visit(tag.block, tag);
@@ -431,14 +432,8 @@ Compiler.prototype = {
     } else {*/
 	//console.log('codely: ' + tagName, code);
 	
-	valueAttrByTagName = {
-		label: 'text',
-		textfield: 'value',
-		button: 'title',
-		def: 'text'
-	};
 	if(tagName){
-		this.buf.push(", " + (valueAttrByTagName[tagName]||valueAttrByTagName.def) + ": (" + code.val.trim() + ")");
+		this.buf.push(", " + getValueAttr(tagName) + ": (" + code.val.trim() + ")");
 	} else {
 		this.buf.push(code.val);
 	}
@@ -2193,7 +2188,7 @@ require.register("utils.js", function(module, exports, require){
  */
 
 var interpolate = exports.interpolate = function(str){
-  return str.replace(/(\\)?([#!]){(.*?)}/g, function(str, escape, flag, code){
+  return str.replace(/(\\)?([#!])\{(.*?)\}/g, function(str, escape, flag, code){
     return escape
       ? str
       : "' + "
@@ -2238,25 +2233,33 @@ var jade = require('jade');
 
 var jadeFile = /\.jade$/,
 	jadeCache = {};
+
+var expose = {
+	jade: '__alias'
+};
+exports.__expose = expose;
+
 	
-K.jade = function(jadeStr, o){
-	var fn, cacheName, arr;
+exports.Jade = {
+	render: function(jadeStr, o){
+		var fn, cacheName, arr;
 
-	if(!o && jadeStr._jadeInput){
-		o = jadeStr._jadeInput;
-	}
-
-	if(!(fn = jadeCache[jadeStr])){
-		if(jadeFile.test(jadeStr)){
-			cacheName = jadeStr; 
-			jadeStr = K.file('jade/' + jadeStr);
-		} else {
-			cacheName = jadeStr;
+		if(!o && jadeStr._jadeInput){
+			o = jadeStr._jadeInput;
 		}
-		jadeCache[cacheName] = (fn = jade.compile(jadeStr));
-	}
 
-	return K.create((arr = fn(o)).length === 1 ? arr[0] : arr);
+		if(!(fn = jadeCache[jadeStr])){
+			if(jadeFile.test(jadeStr)){
+				cacheName = jadeStr; 
+				jadeStr = K.file('jade/' + jadeStr);
+			} else {
+				cacheName = jadeStr;
+			}
+			jadeCache[cacheName] = (fn = jade.compile(jadeStr));
+		}
+
+		return K.create((arr = fn(o)).length === 1 ? arr[0] : arr);
+	}
 };
 
 })();

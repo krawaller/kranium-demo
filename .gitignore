@@ -6,3 +6,4 @@ api.jsca
 .monitor
 .fastdev.lock
 build.log
+.DS_Store

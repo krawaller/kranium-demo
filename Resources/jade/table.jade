@@ -1,3 +1,8 @@
-tableview.board
-  - each msg, user in users
-    label.msg= user + ' says ' + msg
+tableview
+  section(headerPlain="Greetings")
+    row hello
+    row goodbye
+  section(headerPlain="What do they say?")
+    row(type="complexrow")
+    - each msg, user in users
+      row= user + ' says ' + msg
